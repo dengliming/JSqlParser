@@ -143,39 +143,59 @@ public class MySqlSelectIntoClause extends ASTNodeAccessImpl implements Serializ
 
     public StringBuilder appendTo(StringBuilder builder) {
         builder.append("INTO ").append(type);
+        appendFileName(builder);
+        appendCharacterSet(builder);
+        appendFieldsClause(builder);
+        appendLinesClause(builder);
+        return builder;
+    }
+
+    private void appendFileName(StringBuilder builder) {
         if (fileName != null) {
             builder.append(" ").append(fileName);
         }
+    }
+
+    private void appendCharacterSet(StringBuilder builder) {
         if (characterSet != null) {
             builder.append(" CHARACTER SET ").append(characterSet);
         }
-        if (hasFieldsClause()) {
-            builder.append(" ")
-                    .append(fieldsKeyword != null ? fieldsKeyword : FieldsKeyword.FIELDS);
-            if (fieldsTerminatedBy != null) {
-                builder.append(" TERMINATED BY ").append(fieldsTerminatedBy);
-            }
-            if (fieldsEnclosedBy != null) {
-                builder.append(" ");
-                if (fieldsOptionallyEnclosed) {
-                    builder.append("OPTIONALLY ");
-                }
-                builder.append("ENCLOSED BY ").append(fieldsEnclosedBy);
-            }
-            if (fieldsEscapedBy != null) {
-                builder.append(" ESCAPED BY ").append(fieldsEscapedBy);
-            }
+    }
+
+    private void appendFieldsClause(StringBuilder builder) {
+        if (!hasFieldsClause()) {
+            return;
         }
-        if (hasLinesClause()) {
-            builder.append(" LINES");
-            if (linesStartingBy != null) {
-                builder.append(" STARTING BY ").append(linesStartingBy);
-            }
-            if (linesTerminatedBy != null) {
-                builder.append(" TERMINATED BY ").append(linesTerminatedBy);
-            }
+
+        builder.append(" ").append(fieldsKeyword != null ? fieldsKeyword : FieldsKeyword.FIELDS);
+
+        if (fieldsTerminatedBy != null) {
+            builder.append(" TERMINATED BY ").append(fieldsTerminatedBy);
         }
-        return builder;
+        if (fieldsEnclosedBy != null) {
+            builder.append(" ");
+            if (fieldsOptionallyEnclosed) {
+                builder.append("OPTIONALLY ");
+            }
+            builder.append("ENCLOSED BY ").append(fieldsEnclosedBy);
+        }
+        if (fieldsEscapedBy != null) {
+            builder.append(" ESCAPED BY ").append(fieldsEscapedBy);
+        }
+    }
+
+    private void appendLinesClause(StringBuilder builder) {
+        if (!hasLinesClause()) {
+            return;
+        }
+
+        builder.append(" LINES");
+        if (linesStartingBy != null) {
+            builder.append(" STARTING BY ").append(linesStartingBy);
+        }
+        if (linesTerminatedBy != null) {
+            builder.append(" TERMINATED BY ").append(linesTerminatedBy);
+        }
     }
 
     @Override
